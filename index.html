@@ -5,8 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Polyglot Switch — BG ↔ EN/ES/PT/DE/TL</title>
   <meta name="theme-color" content="#0d6efd">
-  <link rel="apple-touch-icon" href="#" id="appleIcon"/>
-  <link rel="manifest" href="#" id="manifestLink"/>
+  <!-- Classic PWA files (put these in your repo root) -->
+  <link rel="apple-touch-icon" href="icons/icon-192.png"/>
+  <link rel="manifest" href="manifest.json"/>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     :root{--tap:14px}
@@ -67,7 +68,7 @@
           <textarea id="taBG" class="form-control" placeholder="Пиши или постави български… (Ctrl/⌘+Enter превежда)"></textarea>
           <div class="d-flex align-items-center gap-2 mt-2">
             <button class="btn btn-sm btn-outline-primary" id="btnDetect">Auto detect ↔</button>
-            <small class="text-secondary">Ще засече езика на въведения текст и ще преведе към BG.</small>
+            <small class="text-secondary">Засича езика и превежда към BG; актуализира активния език.</small>
           </div>
         </div>
       </div>
@@ -76,7 +77,6 @@
     <!-- Right column: one card per foreign language (mobile показва само активния) -->
     <div class="col-12 col-lg-6">
       <div class="row g-3">
-        
         <div class="col-12 col-md-6">
           <div class="card h-100 shadow-sm lang-card active" data-lang="en">
             <div class="card-header d-flex align-items-center justify-content-between">
@@ -222,7 +222,7 @@
         <div class="mb-3">
           <label class="form-label">API Endpoint</label>
           <input id="endpoint" type="url" class="form-control" placeholder="http://127.0.0.1:5050">
-          <div class="form-text">По подразбиране: локалният ти прокси. Ако падне, фронтендът има директен fallback.</div>
+          <div class="form-text">На GitHub Pages не се ползва локален proxy. Frontend пада на HTTPS fallback.</div>
         </div>
         <div id="diag" class="small text-secondary"></div>
       </div>
@@ -237,11 +237,16 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
   // ===== App state =====
-  const LS = 'polyglot.switch.v2';
-  const DEFAULT_ENDPOINT = 'http://127.0.0.1:5050';
+  const LS = 'polyglot.switch.v3';
+  const IS_LOCAL = ['localhost','127.0.0.1'].includes(location.hostname);
+  const DEFAULT_ENDPOINT = IS_LOCAL ? 'http://127.0.0.1:5050' : '';
   let state = { endpoint: DEFAULT_ENDPOINT, activeLang: 'en', theme: 'light' };
 
-  function loadState(){ try{ Object.assign(state, JSON.parse(localStorage.getItem(LS)||'{}')); }catch{} document.documentElement.setAttribute('data-bs-theme', state.theme||'light'); }
+  function loadState(){
+    try{ Object.assign(state, JSON.parse(localStorage.getItem(LS)||'{}')); }catch{}
+    if(!IS_LOCAL) state.endpoint = '';
+    document.documentElement.setAttribute('data-bs-theme', state.theme||'light');
+  }
   function saveState(){ localStorage.setItem(LS, JSON.stringify(state)); }
   const $$ = (s, r=document)=> Array.from(r.querySelectorAll(s));
   const $ = (s, r=document)=> r.querySelector(s);
@@ -253,11 +258,31 @@
     $$('.lang-card').forEach(c=> c.classList.toggle('active', c.dataset.lang===state.activeLang));
   }
 
-  async function api(path, opts){ const url=(state.endpoint||DEFAULT_ENDPOINT).replace(/\/$/,'')+path; const r=await fetch(url,opts); if(!r.ok) throw new Error('HTTP '+r.status+' '+path); return r.json(); }
+  async function api(path, opts){
+    if(!state.endpoint) throw new Error('no-endpoint');
+    const url=(state.endpoint||DEFAULT_ENDPOINT).replace(/\/$/,'')+path;
+    const r=await fetch(url,opts);
+    if(!r.ok) throw new Error('HTTP '+r.status+' '+path);
+    return r.json();
+  }
+
   const mm = c => c.toLowerCase()==='pt' ? 'pt-BR' : c.toLowerCase();
-  async function myMemory(q,src,tgt){ const s=mm(src), t=mm(tgt); const r=await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(q)}&langpair=${encodeURIComponent(s)}|${encodeURIComponent(t)}`); if(!r.ok) throw new Error('MyMemory '+r.status); const d=await r.json(); return d?.responseData?.translatedText||''; }
-  async function translateSmart(q,src,tgt){ try{ const d=await api('/translate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q,source:src,target:tgt,format:'text'})}); if(d?.translatedText) return d.translatedText; throw new Error('bad'); } catch(e){ return await myMemory(q,src,tgt); } }
-  async function detectViaProxy(q){ try{ const d=await api('/detect',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q})}); if(Array.isArray(d)&&d[0]?.language) return d[0].language; }catch{} return 'auto'; }
+  async function myMemory(q,src,tgt){
+    const s=mm(src), t=mm(tgt);
+    const r=await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(q)}&langpair=${encodeURIComponent(s)}|${encodeURIComponent(t)}`);
+    if(!r.ok) throw new Error('MyMemory '+r.status);
+    const d=await r.json(); return d?.responseData?.translatedText||'';
+  }
+  async function translateSmart(q,src,tgt){
+    try{
+      const d=await api('/translate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q,source:src,target:tgt,format:'text'})});
+      if(d?.translatedText) return d.translatedText; throw new Error('bad');
+    }catch(e){ return await myMemory(q,src,tgt); }
+  }
+  async function detectViaProxy(q){
+    try{ const d=await api('/detect',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q})}); if(Array.isArray(d)&&d[0]?.language) return d[0].language; }catch{}
+    return 'auto';
+  }
 
   function wire(){
     // Theme
@@ -268,8 +293,8 @@
     // Settings
     const endpointInput = $('#settingsModal #endpoint'); const diag = $('#settingsModal #diag');
     $('#settingsModal').addEventListener('show.bs.modal', ()=>{ endpointInput.value = state.endpoint; diag.textContent=''; });
-    $('#btnSave').addEventListener('click', ()=>{ state.endpoint = endpointInput.value.trim()||DEFAULT_ENDPOINT; saveState(); });
-    $('#btnTest').addEventListener('click', async()=>{ diag.textContent='Тествам…'; try{ const data=await api('/languages'); diag.textContent='OK: '+(Array.isArray(data)?data.map(x=>x.code).join(', '):JSON.stringify(data)); }catch(e){ diag.textContent='Грешка: '+e.message; }});
+    $('#btnSave').addEventListener('click', ()=>{ state.endpoint = endpointInput.value.trim()||DEFAULT_ENDPOINT; if(!IS_LOCAL) state.endpoint=''; saveState(); });
+    $('#btnTest').addEventListener('click', async()=>{ diag.textContent='Тествам…'; try{ const data=await api('/languages'); diag.textContent='OK: '+(Array.isArray(data)?data.map(x=>x.code).join(', '):JSON.stringify(data)); }catch(e){ diag.textContent='(Очаквано на Pages) '+e.message+' → използва се HTTPS fallback.'; }});
 
     // BG
     $('#bgPaste').addEventListener('click', async()=>{ try{ $('#taBG').value = await navigator.clipboard.readText(); }catch{} });
@@ -302,14 +327,50 @@
   updatePairBadge();
   wire();
 
-  // PWA single-file setup (manifest + SW + icons)
-  (function(){ try{
-    const sizes=[192,512]; const icons=sizes.map(sz=>{ const c=document.createElement('canvas'); c.width=c.height=sz; const g=c.getContext('2d'); g.fillStyle='#0d6efd'; g.beginPath(); g.arc(sz/2,sz/2,sz/2-8,0,Math.PI*2); g.fill(); g.fillStyle='#fff'; g.font=(sz*0.42)+'px system-ui'; g.textAlign='center'; g.textBaseline='middle'; g.fillText('PS', sz/2, sz/2+2); return {src:c.toDataURL('image/png'), sizes:sz+'x'+sz, type:'image/png'}; });
-    const manifest={ name:'Polyglot Switch', short_name:'Polyglot', start_url:'./', display:'standalone', background_color:'#ffffff', theme_color:'#0d6efd', icons};
-    const mblob=new Blob([JSON.stringify(manifest)],{type:'application/json'}); const murl=URL.createObjectURL(mblob); document.getElementById('manifestLink').href=murl; document.getElementById('appleIcon').href=icons[0].src;
-    if('serviceWorker' in navigator){ const sw=`self.addEventListener('install',e=>{self.skipWaiting(); e.waitUntil(caches.open('polyglot-v1').then(c=>c.addAll(['./'])))}); self.addEventListener('activate',e=>self.clients.claim()); self.addEventListener('fetch',e=>{e.respondWith(fetch(e.request).catch(()=>caches.match(e.request).then(r=>r||caches.match('./'))))});`; const sblob=new Blob([sw],{type:'text/javascript'}); const surl=URL.createObjectURL(sblob); navigator.serviceWorker.register(surl,{scope:'./'}).catch(()=>{}); }
-    let promptEvt; window.addEventListener('beforeinstallprompt',(e)=>{ e.preventDefault(); promptEvt=e; const b=document.getElementById('btnInstall'); b.hidden=false; b.onclick=()=>{ promptEvt.prompt(); b.hidden=true; }; });
-  }catch(_){}})();
+  // Classic PWA registration (external files)
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js', { scope: './' }).catch(()=>{});
+  }
 </script>
+
+<!--
+====================
+CREATE THESE 2 FILES IN YOUR REPO ROOT:
+====================
+
+FILE: manifest.json
+{
+  "name": "Polyglot Switch",
+  "short_name": "Polyglot",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0d6efd",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
+
+--------------------
+FILE: sw.js
+const CACHE = 'polyglot-v1';
+const OFFLINE_URLS = [
+  './','index.html',
+  'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css',
+  'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js'
+];
+self.addEventListener('install',e=>{ self.skipWaiting(); e.waitUntil(caches.open(CACHE).then(c=>c.addAll(OFFLINE_URLS))); });
+self.addEventListener('activate',e=>self.clients.claim());
+self.addEventListener('fetch',e=>{ e.respondWith(fetch(e.request).catch(()=>caches.match(e.request).then(r=>r||caches.match('./')))); });
+
+--------------------
+ALSO ADD 2 ICON FILES:
+  icons/icon-192.png
+  icons/icon-512.png
+(можеш временно да копираш 512→192, или да ползваш каквато и да е PNG икона.)
+
+После комитни всички файлове и активирай GitHub Pages (Settings → Pages → Deploy from a branch → main /root).
+-->
 </body>
 </html>
