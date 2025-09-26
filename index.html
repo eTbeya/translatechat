@@ -19,10 +19,11 @@
     .btm-bar .btn{min-height:44px}
     @keyframes fadeIn{from{opacity:.3;transform:translateY(2px)}to{opacity:1;transform:none}}
     @media (max-width: 991.98px){ /* mobile: показвай само BG + активния език */
-      .lang-card{display:none}
+      .lang-col{display:none;}
+      .lang-col.active{display:block;}
+      .lang-card{display:block; width:100%;}
+    }
       .lang-card.active{display:block}
-      display: block !important;
-      width: 100% !important;
     }
   </style>
 </head>
@@ -80,7 +81,7 @@
     <!-- Right column: one card per foreign language (mobile показва само активния) -->
     <div class="col-12 col-lg-6">
       <div class="row g-3">
-        <div class="col-12 col-md-6">
+        <div class="col-12 col-md-6 lang-col"lang-col active">
           <div class="card h-100 shadow-sm lang-card active" data-lang="en">
             <div class="card-header d-flex align-items-center justify-content-between">
               <div>
@@ -103,7 +104,7 @@
           </div>
         </div>
 
-        <div class="col-12 col-md-6">
+        <div class="col-12 col-md-6 lang-col">
           <div class="card h-100 shadow-sm lang-card" data-lang="es">
             <div class="card-header d-flex align-items-center justify-content-between">
               <div>
@@ -126,7 +127,7 @@
           </div>
         </div>
 
-        <div class="col-12 col-md-6">
+        <div class="col-12 col-md-6 lang-col">
           <div class="card h-100 shadow-sm lang-card" data-lang="pt">
             <div class="card-header d-flex align-items-center justify-content-between">
               <div>
@@ -149,7 +150,7 @@
           </div>
         </div>
 
-        <div class="col-12 col-md-6">
+        <div class="col-12 col-md-6 lang-col">
           <div class="card h-100 shadow-sm lang-card" data-lang="de">
             <div class="card-header d-flex align-items-center justify-content-between">
               <div>
@@ -172,7 +173,7 @@
           </div>
         </div>
 
-        <div class="col-12 col-md-6">
+        <div class="col-12 col-md-6 lang-col">
           <div class="card h-100 shadow-sm lang-card" data-lang="tl">
             <div class="card-header d-flex align-items-center justify-content-between">
               <div>
@@ -196,7 +197,7 @@
         </div>
 
         <!-- Indonesian -->
-        <div class="col-12 col-md-6">
+        <div class="col-12 col-md-6 lang-col">
           <div class="card h-100 shadow-sm lang-card" data-lang="id">
             <div class="card-header d-flex align-items-center justify-content-between">
               <div>
@@ -282,7 +283,12 @@
     $('#pairBadge').textContent = `BG ↔ ${state.activeLang.toUpperCase()}`;
     $('#toLang').textContent = state.activeLang.toUpperCase();
     $('#langSelect').value = state.activeLang;
-    $$('.lang-card').forEach(c=> c.classList.toggle('active', c.dataset.lang===state.activeLang));
+    $$('.lang-card').forEach(c=>{
+      const on = c.dataset.lang === state.activeLang;
+      c.classList.toggle('active', on);
+      const col = c.closest('.lang-col');
+      if(col) col.classList.toggle('active', on);
+    });
   }
 
   async function api(path, opts){
@@ -401,4 +407,3 @@ ALSO ADD 2 ICON FILES:
 -->
 </body>
 </html>
-
