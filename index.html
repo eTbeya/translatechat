@@ -14,15 +14,14 @@
     .card textarea{min-height:140px;resize:vertical}
     .kbd{padding:.1rem .35rem;border:1px solid var(--bs-border-color);border-radius:.25rem;background:var(--bs-tertiary-bg);font-size:.8rem}
     .fade-enter{animation:fadeIn .18s ease-out}
-    .btm-bar{position:sticky;bottom:0;left:0;right:0;z-index:1030}
-    .btm-bar .btn{min-height:44px}
     @keyframes fadeIn{from{opacity:.3;transform:translateY(2px)}to{opacity:1;transform:none}}
-    /* mobile: показвай само Моят език + активния */
+    /* mobile: показвай само активния панел долу */
     @media (max-width: 991.98px){
       .lang-col{display:none;}
       .lang-col.active{display:block;}
       .lang-card{display:block;width:100%}
     }
+    .btm-bar{position:sticky;bottom:0;left:0;right:0;z-index:1030}
   </style>
 </head>
 <body>
@@ -53,9 +52,9 @@
 </nav>
 
 <main class="container-lg py-3">
+  <!-- TOP: input on full width -->
   <div class="row g-3">
-    <!-- User language panel (dynamic pivot) -->
-    <div class="col-12 col-lg-6">
+    <div class="col-12">
       <div class="card h-100 shadow-sm fade-enter">
         <div class="card-header d-flex align-items-center justify-content-between">
           <div>
@@ -78,146 +77,140 @@
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Right column: one card per foreign language (mobile показва само активния) -->
-    <div class="col-12 col-lg-6">
-      <div class="row g-3">
-
-        <div class="col-12 col-md-6 lang-col active">
-          <div class="card h-100 shadow-sm lang-card active" data-lang="en">
-            <div class="card-header d-flex align-items-center justify-content-between">
-              <div><div class="fw-semibold">English</div><small class="text-secondary">This panel sets the active language</small></div>
-              <div class="btn-group">
-                <button class="btn btn-sm btn-outline-secondary" data-action="copy">Copy</button>
-                <button class="btn btn-sm btn-outline-secondary" data-action="clear">Clear</button>
-                <button class="btn btn-sm btn-primary" data-action="translate">Translate</button>
-              </div>
-            </div>
-            <div class="card-body">
-              <textarea class="form-control" placeholder="Type English…"></textarea>
-              <div class="d-flex align-items-center justify-content-between mt-2">
-                <small class="text-secondary">ISO: <code>en</code></small>
-                <button class="btn btn-sm btn-outline-dark" data-action="make-active">Активирай ↔</button>
-              </div>
-            </div>
+  <!-- BOTTOM: language panels grid -->
+  <div class="row g-3 mt-1">
+    <div class="col-12 col-md-6 col-lg-4 lang-col active">
+      <div class="card h-100 shadow-sm lang-card active" data-lang="en">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <div><div class="fw-semibold">English</div><small class="text-secondary">This panel sets the active language</small></div>
+          <div class="btn-group">
+            <button class="btn btn-sm btn-outline-secondary" data-action="copy">Copy</button>
+            <button class="btn btn-sm btn-outline-secondary" data-action="clear">Clear</button>
+            <button class="btn btn-sm btn-primary" data-action="translate">Translate</button>
           </div>
         </div>
-
-        <div class="col-12 col-md-6 lang-col">
-          <div class="card h-100 shadow-sm lang-card" data-lang="es">
-            <div class="card-header d-flex align-items-center justify-content-between">
-              <div><div class="fw-semibold">Español</div><small class="text-secondary">Este panel define el idioma activo</small></div>
-              <div class="btn-group">
-                <button class="btn btn-sm btn-outline-secondary" data-action="copy">Copiar</button>
-                <button class="btn btn-sm btn-outline-secondary" data-action="clear">Limpiar</button>
-                <button class="btn btn-sm btn-primary" data-action="translate">Traducir</button>
-              </div>
-            </div>
-            <div class="card-body">
-              <textarea class="form-control" placeholder="Escribe en español…"></textarea>
-              <div class="d-flex align-items-center justify-content-between mt-2">
-                <small class="text-secondary">ISO: <code>es</code></small>
-                <button class="btn btn-sm btn-outline-dark" data-action="make-active">Activar ↔</button>
-              </div>
-            </div>
+        <div class="card-body">
+          <textarea class="form-control" placeholder="Type English…"></textarea>
+          <div class="d-flex align-items-center justify-content-between mt-2">
+            <small class="text-secondary">ISO: <code>en</code></small>
+            <button class="btn btn-sm btn-outline-dark" data-action="make-active">Активирай ↔</button>
           </div>
         </div>
+      </div>
+    </div>
 
-        <div class="col-12 col-md-6 lang-col">
-          <div class="card h-100 shadow-sm lang-card" data-lang="pt">
-            <div class="card-header d-flex align-items-center justify-content-between">
-              <div><div class="fw-semibold">Português (BR)</div><small class="text-secondary">Este painel define o idioma ativo</small></div>
-              <div class="btn-group">
-                <button class="btn btn-sm btn-outline-secondary" data-action="copy">Copiar</button>
-                <button class="btn btn-sm btn-outline-secondary" data-action="clear">Limpar</button>
-                <button class="btn btn-sm btn-primary" data-action="translate">Traduzir</button>
-              </div>
-            </div>
-            <div class="card-body">
-              <textarea class="form-control" placeholder="Digite em português…"></textarea>
-              <div class="d-flex align-items-center justify-content-between mt-2">
-                <small class="text-secondary">ISO: <code>pt</code></small>
-                <button class="btn btn-sm btn-outline-dark" data-action="make-active">Ativar ↔</button>
-              </div>
-            </div>
+    <div class="col-12 col-md-6 col-lg-4 lang-col">
+      <div class="card h-100 shadow-sm lang-card" data-lang="es">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <div><div class="fw-semibold">Español</div><small class="text-secondary">Este panel define el idioma activo</small></div>
+          <div class="btn-group">
+            <button class="btn btn-sm btn-outline-secondary" data-action="copy">Copiar</button>
+            <button class="btn btn-sm btn-outline-secondary" data-action="clear">Limpiar</button>
+            <button class="btn btn-sm btn-primary" data-action="translate">Traducir</button>
           </div>
         </div>
-
-        <div class="col-12 col-md-6 lang-col">
-          <div class="card h-100 shadow-sm lang-card" data-lang="de">
-            <div class="card-header d-flex align-items-center justify-content-between">
-              <div><div class="fw-semibold">Deutsch</div><small class="text-secondary">Dieses Panel setzt die aktive Sprache</small></div>
-              <div class="btn-group">
-                <button class="btn btn-sm btn-outline-secondary" data-action="copy">Kopieren</button>
-                <button class="btn btn-sm btn-outline-secondary" data-action="clear">Löschen</button>
-                <button class="btn btn-sm btn-primary" data-action="translate">Übersetzen</button>
-              </div>
-            </div>
-            <div class="card-body">
-              <textarea class="form-control" placeholder="Deutsch schreiben…"></textarea>
-              <div class="d-flex align-items-center justify-content-between mt-2">
-                <small class="text-secondary">ISO: <code>de</code></small>
-                <button class="btn btn-sm btn-outline-dark" data-action="make-active">Aktivieren ↔</button>
-              </div>
-            </div>
+        <div class="card-body">
+          <textarea class="form-control" placeholder="Escribe en español…"></textarea>
+          <div class="d-flex align-items-center justify-content-between mt-2">
+            <small class="text-secondary">ISO: <code>es</code></small>
+            <button class="btn btn-sm btn-outline-dark" data-action="make-active">Activar ↔</button>
           </div>
         </div>
+      </div>
+    </div>
 
-        <div class="col-12 col-md-6 lang-col">
-          <div class="card h-100 shadow-sm lang-card" data-lang="tl">
-            <div class="card-header d-flex align-items-center justify-content-between">
-              <div><div class="fw-semibold">Filipino (Tagalog)</div><small class="text-secondary">Ang panel na ito ang nagtatakda ng aktibong wika</small></div>
-              <div class="btn-group">
-                <button class="btn btn-sm btn-outline-secondary" data-action="copy">Kopyahin</button>
-                <button class="btn btn-sm btn-outline-secondary" data-action="clear">I-clear</button>
-                <button class="btn btn-sm btn-primary" data-action="translate">Isalin</button>
-              </div>
-            </div>
-            <div class="card-body">
-              <textarea class="form-control" placeholder="Magsulat sa Tagalog…"></textarea>
-              <div class="d-flex align-items-center justify-content-between mt-2">
-                <small class="text-secondary">ISO: <code>tl</code></small>
-                <button class="btn btn-sm btn-outline-dark" data-action="make-active">I-activate ↔</button>
-              </div>
-            </div>
+    <div class="col-12 col-md-6 col-lg-4 lang-col">
+      <div class="card h-100 shadow-sm lang-card" data-lang="pt">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <div><div class="fw-semibold">Português (BR)</div><small class="text-secondary">Este painel define o idioma ativo</small></div>
+          <div class="btn-group">
+            <button class="btn btn-sm btn-outline-secondary" data-action="copy">Copiar</button>
+            <button class="btn btn-sm btn-outline-secondary" data-action="clear">Limpar</button>
+            <button class="btn btn-sm btn-primary" data-action="translate">Traduzir</button>
           </div>
         </div>
-
-        <div class="col-12 col-md-6 lang-col">
-          <div class="card h-100 shadow-sm lang-card" data-lang="id">
-            <div class="card-header d-flex align-items-center justify-content-between">
-              <div><div class="fw-semibold">Bahasa Indonesia</div><small class="text-secondary">Panel ini menentukan bahasa aktif</small></div>
-              <div class="btn-group">
-                <button class="btn btn-sm btn-outline-secondary" data-action="copy">Salin</button>
-                <button class="btn btn-sm btn-outline-secondary" data-action="clear">Bersihkan</button>
-                <button class="btn btn-sm btn-primary" data-action="translate">Terjemahkan</button>
-              </div>
-            </div>
-            <div class="card-body">
-              <textarea class="form-control" placeholder="Ketik bahasa Indonesia…"></textarea>
-              <div class="d-flex align-items-center justify-content-between mt-2">
-                <small class="text-secondary">ISO: <code>id</code></small>
-                <button class="btn btn-sm btn-outline-dark" data-action="make-active">Aktifkan ↔</button>
-              </div>
-            </div>
+        <div class="card-body">
+          <textarea class="form-control" placeholder="Digite em português…"></textarea>
+          <div class="d-flex align-items-center justify-content-between mt-2">
+            <small class="text-secondary">ISO: <code>pt</code></small>
+            <button class="btn btn-sm btn-outline-dark" data-action="make-active">Ativar ↔</button>
           </div>
         </div>
+      </div>
+    </div>
 
+    <div class="col-12 col-md-6 col-lg-4 lang-col">
+      <div class="card h-100 shadow-sm lang-card" data-lang="de">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <div><div class="fw-semibold">Deutsch</div><small class="text-secondary">Dieses Panel setzt die aktive Sprache</small></div>
+          <div class="btn-group">
+            <button class="btn btn-sm btn-outline-secondary" data-action="copy">Kopieren</button>
+            <button class="btn btn-sm btn-outline-secondary" data-action="clear">Löschen</button>
+            <button class="btn btn-sm btn-primary" data-action="translate">Übersetzen</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <textarea class="form-control" placeholder="Deutsch schreiben…"></textarea>
+          <div class="d-flex align-items-center justify-content-between mt-2">
+            <small class="text-secondary">ISO: <code>de</code></small>
+            <button class="btn btn-sm btn-outline-dark" data-action="make-active">Aktivieren ↔</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-4 lang-col">
+      <div class="card h-100 shadow-sm lang-card" data-lang="tl">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <div><div class="fw-semibold">Filipino (Tagalog)</div><small class="text-secondary">Ang panel na ito ang nagtatakda ng aktibong wika</small></div>
+          <div class="btn-group">
+            <button class="btn btn-sm btn-outline-secondary" data-action="copy">Kopyahin</button>
+            <button class="btn btn-sm btn-outline-secondary" data-action="clear">I-clear</button>
+            <button class="btn btn-sm btn-primary" data-action="translate">Isalin</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <textarea class="form-control" placeholder="Magsulat sa Tagalog…"></textarea>
+          <div class="d-flex align-items-center justify-content-between mt-2">
+            <small class="text-secondary">ISO: <code>tl</code></small>
+            <button class="btn btn-sm btn-outline-dark" data-action="make-active">I-activate ↔</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-4 lang-col">
+      <div class="card h-100 shadow-sm lang-card" data-lang="id">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <div><div class="fw-semibold">Bahasa Indonesia</div><small class="text-secondary">Panel ini menentukan bahasa aktif</small></div>
+          <div class="btn-group">
+            <button class="btn btn-sm btn-outline-secondary" data-action="copy">Salin</button>
+            <button class="btn btn-sm btn-outline-secondary" data-action="clear">Bersihkan</button>
+            <button class="btn btn-sm btn-primary" data-action="translate">Terjemahkan</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <textarea class="form-control" placeholder="Ketik bahasa Indonesia…"></textarea>
+          <div class="d-flex align-items-center justify-content-between mt-2">
+            <small class="text-secondary">ISO: <code>id</code></small>
+            <button class="btn btn-sm btn-outline-dark" data-action="make-active">Aktifkan ↔</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="text-secondary small mt-3">
-    <span class="kbd">Ctrl/⌘ + Enter</span> translates current box. On mobile use the bottom bar.
-  </div>
+  <p class="text-secondary small mt-3">
+    <span class="kbd">Ctrl/⌘ + Enter</span> превежда текущото поле. На мобилно — превключвай активния език с бутона в картата.
+  </p>
 </main>
 
-<!-- Bottom action bar (mobile) -->
+<!-- Bottom bar: only swap (↔) -->
 <div class="btm-bar bg-body border-top py-2">
-  <div class="container-lg d-flex gap-2">
-    <button class="btn btn-outline-primary flex-grow-1" id="quickPaste">Постави</button>
+  <div class="container-lg d-flex justify-content-center">
     <button class="btn btn-outline-secondary" id="quickSwap" title="Смени активния език">↔</button>
-    <button class="btn btn-primary flex-grow-1" id="quickTranslate">Преведи</button>
   </div>
 </div>
 
@@ -260,7 +253,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
   // ===== State & helpers =====
-  const LS = 'polyglot.switch.v6';
+  const LS = 'polyglot.switch.v8';
   const IS_LOCAL = ['localhost','127.0.0.1'].includes(location.hostname);
   const DEFAULT_ENDPOINT = IS_LOCAL ? 'http://127.0.0.1:5050' : '';
   const LANG_NAMES = { bg:'Български', en:'English', es:'Español', pt:'Português (BR)', de:'Deutsch', tl:'Filipino (Tagalog)', id:'Bahasa Indonesia' };
@@ -273,7 +266,7 @@
 
   // ===== API & translation =====
   async function api(path, opts){
-    if(!state.endpoint) throw new Error('no-endpoint'); // force fallback on Pages
+    if(!state.endpoint) throw new Error('no-endpoint'); // на Pages пада на HTTPS fallback
     const url=(state.endpoint||DEFAULT_ENDPOINT).replace(/\/$/,'')+path;
     const r=await fetch(url,opts); if(!r.ok) throw new Error('HTTP '+r.status+' '+path); return r.json();
   }
@@ -313,59 +306,57 @@
   // ===== I18N dictionary =====
   const I18N = {
     bg:{nav_my:'Моят език:',nav_partner:'Партньор:',theme:'Тема',install:'Инсталирай',settings:'Настройки',readme:'README',
-        user_title:'Моят език',hint_prefix:'Пишеш тук → превежда към',paste:'Постави',copy:'Копирай',clear:'Изчисти',translate:'Преведи',
+        user_title:'Моят език',hint_prefix:'Пишеш тук → превежда към',
+        paste:'Постави',copy:'Копирай',clear:'Изчисти',translate:'Преведи',
         autodetect:'Auto detect ↔',detect_hint:'Засича езика и превежда към „Моят език“; актуализира активния.',
-        quick_paste:'Постави',quick_translate:'Преведи',
         readme_title:'Как да използваш приложението',readme_ok:'Разбрах',
         readme_html:`<ol class="mb-2">
-          <li><b>Моят език</b> (интерфейс + pivot) и <b>Партньор</b> (език за превод) са горе вдясно.</li>
-          <li>Пиши в левия панел → <b>Преведи</b> изпраща към <b>Партньор</b>.</li>
+          <li><b>Моят език</b> (UI+pivot) и <b>Партньор</b> (цел) са горе вдясно.</li>
+          <li>Пиши <b>горе</b> → <b>Преведи</b> или <b>Ctrl/⌘+Enter</b> изпраща към <b>Партньор</b>.</li>
           <li>Пиши в десен панел → <b>Translate</b> връща към <b>Моят език</b> и го прави активен.</li>
-          <li><b>Ctrl/⌘+Enter</b> превежда текущото поле.</li>
-          <li>На телефон ползвай долната лента.</li>
+          <li>Долната лента има само <b>↔</b> за бърза смяна.</li>
         </ol>`},
     en:{nav_my:'My language:',nav_partner:'Partner:',theme:'Theme',install:'Install',settings:'Settings',readme:'README',
-        user_title:'My language',hint_prefix:'Type here → translates to',paste:'Paste',copy:'Copy',clear:'Clear',translate:'Translate',
-        autodetect:'Auto detect ↔',detect_hint:'Detects language and translates to “My language”; updates active.',
-        quick_paste:'Paste',quick_translate:'Translate',
+        user_title:'My language',hint_prefix:'Type here → translates to',
+        paste:'Paste',copy:'Copy',clear:'Clear',translate:'Translate',
+        autodetect:'Auto detect ↔',detect_hint:'Detects and translates to “My language”; updates active.',
         readme_title:'How to use',readme_ok:'Got it',
         readme_html:`<ol class="mb-2">
-          <li><b>My language</b> (UI+pivot) and <b>Partner</b> (target) are in the top-right.</li>
-          <li>Type in the left panel → <b>Translate</b> sends to <b>Partner</b>.</li>
-          <li>Type in a right panel → <b>Translate</b> sends back to <b>My language</b> and makes it active.</li>
-          <li><b>Ctrl/⌘+Enter</b> translates the focused box.</li>
-          <li>On mobile use the bottom bar.</li>
+          <li><b>My language</b> (UI+pivot) and <b>Partner</b> (target) are top-right.</li>
+          <li>Type above → <b>Translate</b> or <b>Ctrl/⌘+Enter</b> sends to <b>Partner</b>.</li>
+          <li>Right panel → <b>Translate</b> sends back to <b>My language</b> and makes it active.</li>
+          <li>The bottom bar keeps only <b>↔</b> for quick switch.</li>
         </ol>`},
     es:{nav_my:'Mi idioma:',nav_partner:'Pareja:',theme:'Tema',install:'Instalar',settings:'Ajustes',readme:'README',
-        user_title:'Mi idioma',hint_prefix:'Escribe aquí → traduce a',paste:'Pegar',copy:'Copiar',clear:'Limpiar',translate:'Traducir',
+        user_title:'Mi idioma',hint_prefix:'Escribe aquí → traduce a',
+        paste:'Pegar',copy:'Copiar',clear:'Limpiar',translate:'Traducir',
         autodetect:'Auto detectar ↔',detect_hint:'Detecta y traduce a “Mi idioma”; actualiza el activo.',
-        quick_paste:'Pegar',quick_translate:'Traducir',
         readme_title:'Cómo usar',readme_ok:'Entendido',
-        readme_html:`<ol class="mb-2"><li><b>Mi idioma</b> (UI+pivote) y <b>Pareja</b> (destino) arriba a la derecha.</li><li>Desde la izquierda → a <b>Pareja</b>.</li><li>Desde la derecha → a <b>Mi idioma</b>.</li><li><b>Ctrl/⌘+Enter</b> traduce.</li><li>En móvil: barra inferior.</li></ol>`},
+        readme_html:`<ol class="mb-2"><li><b>Mi idioma</b> (UI+pivote) y <b>Pareja</b> (destino) arriba a la derecha.</li><li>Arriba → <b>Traducir</b> o <b>Ctrl/⌘+Enter</b> a <b>Pareja</b>.</li><li>Panel derecho → a <b>Mi idioma</b>.</li><li>Abajo queda solo <b>↔</b>.</li></ol>`},
     pt:{nav_my:'Meu idioma:',nav_partner:'Parceiro:',theme:'Tema',install:'Instalar',settings:'Configurações',readme:'README',
-        user_title:'Meu idioma',hint_prefix:'Digite aqui → traduz para',paste:'Colar',copy:'Copiar',clear:'Limpar',translate:'Traduzir',
+        user_title:'Meu idioma',hint_prefix:'Digite aqui → traduz para',
+        paste:'Colar',copy:'Copiar',clear:'Limpar',translate:'Traduzir',
         autodetect:'Auto detectar ↔',detect_hint:'Detecta e traduz para “Meu idioma”; atualiza o ativo.',
-        quick_paste:'Colar',quick_translate:'Traduzir',
         readme_title:'Como usar',readme_ok:'Entendi',
-        readme_html:`<ol class="mb-2"><li><b>Meu idioma</b> (UI+pivô) e <b>Parceiro</b> (alvo) no canto superior direito.</li><li>Da esquerda → para <b>Parceiro</b>.</li><li>Da direita → para <b>Meu idioma</b>.</li><li><b>Ctrl/⌘+Enter</b> traduz.</li><li>No celular: barra inferior.</li></ol>`},
+        readme_html:`<ol class="mb-2"><li><b>Meu idioma</b> (UI+pivô) e <b>Parceiro</b> (alvo) no canto superior direito.</li><li>Acima → <b>Traduzir</b> ou <b>Ctrl/⌘+Enter</b> para <b>Parceiro</b>.</li><li>Painel direito → de volta ao <b>Meu idioma</b>.</li><li>A barra inferior fica só com <b>↔</b>.</li></ol>`},
     de:{nav_my:'Meine Sprache:',nav_partner:'Partner:',theme:'Thema',install:'Installieren',settings:'Einstellungen',readme:'README',
-        user_title:'Meine Sprache',hint_prefix:'Hier schreiben → übersetzt nach',paste:'Einfügen',copy:'Kopieren',clear:'Leeren',translate:'Übersetzen',
+        user_title:'Meine Sprache',hint_prefix:'Hier schreiben → übersetzt nach',
+        paste:'Einfügen',copy:'Kopieren',clear:'Leeren',translate:'Übersetzen',
         autodetect:'Auto erkennen ↔',detect_hint:'Erkennt und übersetzt zu „Meine Sprache“; aktualisiert aktiv.',
-        quick_paste:'Einfügen',quick_translate:'Übersetzen',
         readme_title:'Anleitung',readme_ok:'Alles klar',
-        readme_html:`<ol class="mb-2"><li><b>Meine Sprache</b> (UI+Drehpunkt) und <b>Partner</b> (Ziel) oben rechts.</li><li>Links → zu <b>Partner</b>.</li><li>Rechts → zu <b>Meine Sprache</b>.</li><li><b>Ctrl/⌘+Enter</b> übersetzt.</li><li>Mobil: Leiste unten.</li></ol>`},
+        readme_html:`<ol class="mb-2"><li><b>Meine Sprache</b> (UI+Drehpunkt) und <b>Partner</b> (Ziel) oben rechts.</li><li>Oben → <b>Übersetzen</b> oder <b>Ctrl/⌘+Enter</b> zu <b>Partner</b>.</li><li>Rechts → zurück zu <b>Meine Sprache</b>.</li><li>Unten bleibt nur <b>↔</b>.</li></ol>`},
     tl:{nav_my:'Aking wika:',nav_partner:'Katuwang:',theme:'Tema',install:'I-install',settings:'Mga setting',readme:'README',
-        user_title:'Aking wika',hint_prefix:'Dito magsulat → isasalin sa',paste:'I-paste',copy:'Kopyahin',clear:'I-clear',translate:'Isalin',
+        user_title:'Aking wika',hint_prefix:'Dito magsulat → isasalin sa',
+        paste:'I-paste',copy:'Kopyahin',clear:'I-clear',translate:'Isalin',
         autodetect:'Auto detect ↔',detect_hint:'Tinutukoy at isinasalin sa “Aking wika”; ina-update ang aktibo.',
-        quick_paste:'I-paste',quick_translate:'Isalin',
         readme_title:'Paano gamitin',readme_ok:'Sige',
-        readme_html:`<ol class="mb-2"><li><b>Aking wika</b> (UI+pivot) at <b>Katuwang</b> (target) sa itaas na kanan.</li><li>Mula sa kaliwa → sa <b>Katuwang</b>.</li><li>Mula sa kanan → sa <b>Aking wika</b>.</li><li><b>Ctrl/⌘+Enter</b> nagsasalin.</li><li>Sa mobile: ibabang bar.</li></ol>`},
+        readme_html:`<ol class="mb-2"><li><b>Aking wika</b> (UI+pivot) at <b>Katuwang</b> (target) sa itaas na kanan.</li><li>Sa itaas → <b>Isalin</b> o <b>Ctrl/⌘+Enter</b>.</li><li>Kanang panel → balik sa <b>Aking wika</b>.</li><li>Sa ibaba nananatili lang ang <b>↔</b>.</li></ol>`},
     id:{nav_my:'Bahasa saya:',nav_partner:'Pasangan:',theme:'Tema',install:'Pasang',settings:'Pengaturan',readme:'README',
-        user_title:'Bahasa saya',hint_prefix:'Ketik di sini → terjemahkan ke',paste:'Tempel',copy:'Salin',clear:'Bersihkan',translate:'Terjemahkan',
+        user_title:'Bahasa saya',hint_prefix:'Ketik di sini → terjemahkan ke',
+        paste:'Tempel',copy:'Salin',clear:'Bersihkan',translate:'Terjemahkan',
         autodetect:'Deteksi otomatis ↔',detect_hint:'Mendeteksi dan menerjemahkan ke “Bahasa saya”; memperbarui aktif.',
-        quick_paste:'Tempel',quick_translate:'Terjemahkan',
         readme_title:'Cara pakai',readme_ok:'Mengerti',
-        readme_html:`<ol class="mb-2"><li><b>Bahasa saya</b> (UI+pivot) dan <b>Pasangan</b> (target) di kanan atas.</li><li>Dari kiri → ke <b>Pasangan</b>.</li><li>Dari kanan → ke <b>Bahasa saya</b>.</li><li><b>Ctrl/⌘+Enter</b> menerjemahkan.</li><li>Di ponsel: bilah bawah.</li></ol>`}
+        readme_html:`<ol class="mb-2"><li><b>Bahasa saya</b> (UI+pivot) dan <b>Pasangan</b> (target) di kanan atas.</li><li>Di atas → <b>Terjemahkan</b> atau <b>Ctrl/⌘+Enter</b> ke <b>Pasangan</b>.</li><li>Panel kanan → kembali ke <b>Bahasa saya</b>.</li><li>Bar bawah hanya menyisakan <b>↔</b>.</li></ol>`}
   };
 
   function applyI18N(){
@@ -377,19 +368,16 @@
     $('#btnInstall').textContent = tr.install;
     $('#btnSettings').textContent = tr.settings;
     $('#btnReadme').textContent = tr.readme;
-    // Left panel
-    $('#userLangTitle').textContent = tr.user_title;
+    // Top panel
+    $('#userLangTitle').textContent = LANG_NAMES[state.userLang] || tr.user_title;
     $('#hintPrefix').textContent = tr.hint_prefix;
-    $('#userPaste').textContent = tr.paste;
-    $('#userCopy').textContent  = tr.copy;
-    $('#userClear').textContent = tr.clear;
+    $('#userPaste').textContent  = tr.paste;
+    $('#userCopy').textContent   = tr.copy;
+    $('#userClear').textContent  = tr.clear;
     $('#userTranslate').textContent = tr.translate;
-    $('#btnDetect').textContent = tr.autodetect;
+    $('#btnDetect').textContent  = tr.autodetect;
     $('#detectHint').textContent = tr.detect_hint;
-    // Bottom bar
-    $('#quickPaste').textContent = tr.quick_paste;
-    $('#quickTranslate').textContent = tr.quick_translate;
-    // README modal
+    // README
     $('#readmeTitle').textContent = tr.readme_title;
     $('#readmeBody').innerHTML   = tr.readme_html;
     $('#readmeClose').textContent= tr.readme_ok;
@@ -425,14 +413,14 @@
     $('#btnSave').addEventListener('click', ()=>{ state.endpoint = endpointInput.value.trim()||DEFAULT_ENDPOINT; if(!IS_LOCAL) state.endpoint=''; saveState(); });
     $('#btnTest').addEventListener('click', async()=>{ diag.textContent='Тествам…'; try{ const data=await api('/languages'); diag.textContent='OK: '+(Array.isArray(data)?data.map(x=>x.code).join(', '):JSON.stringify(data)); }catch(e){ diag.textContent='(Очаквано на Pages) '+e.message+' → използва се HTTPS fallback.'; }});
 
-    // User panel
+    // Top input buttons
     $('#userPaste').addEventListener('click', async()=>{ try{ $('#taUSER').value = await navigator.clipboard.readText(); }catch{} });
-    $('#userCopy').addEventListener('click', async()=>{ try{ await navigator.clipboard.writeText($('#taUSER').value); }catch{} });
+    $('#userCopy').addEventListener('click',  async()=>{ try{ await navigator.clipboard.writeText($('#taUSER').value||''); }catch{} });
     $('#userClear').addEventListener('click', ()=> $('#taUSER').value='');
     $('#userTranslate').addEventListener('click', ()=> translateFromUser());
     $('#taUSER').addEventListener('keydown', e=>{ if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){ e.preventDefault(); translateFromUser(); }});
 
-    // Foreign panels
+    // Panels
     $$('.card[data-lang]').forEach(card=>{
       const lang = card.dataset.lang; const ta = $('textarea', card);
       $('[data-action="make-active"]', card).addEventListener('click', ()=>{ state.activeLang=lang; saveState(); updatePairBadge(); });
@@ -442,12 +430,10 @@
       $('[data-action="clear"]', card).addEventListener('click', ()=> ta.value='');
     });
 
-    // Bottom quick actions
-    $('#quickPaste').addEventListener('click', async()=>{ try{ $('#taUSER').value = await navigator.clipboard.readText(); }catch{} });
+    // Bottom quick swap
     $('#quickSwap').addEventListener('click', ()=>{ const order=['en','es','pt','de','tl','id']; const i=order.indexOf(state.activeLang); state.activeLang=order[(i+1)%order.length]; saveState(); updatePairBadge(); });
-    $('#quickTranslate').addEventListener('click', ()=> translateFromUser());
 
-    // PWA install (optional UI)
+    // PWA install (optional)
     window.addEventListener('beforeinstallprompt', (e)=>{ e.preventDefault(); window.deferredPrompt = e; $('#btnInstall').hidden = false; });
     $('#btnInstall').addEventListener('click', async()=>{ const p=window.deferredPrompt; if(!p) return; p.prompt(); await p.userChoice; $('#btnInstall').hidden = true; window.deferredPrompt=null; });
   }
