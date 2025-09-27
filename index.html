@@ -3,9 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Polyglot Switch — BG ↔ EN/ES/PT/DE/TL/ID</title>
+  <title>Polyglot Switch — Any ↔ Any (BG/EN/ES/PT/DE/TL/ID)</title>
   <meta name="theme-color" content="#0d6efd">
-  <!-- Classic PWA files (put these in your repo root) -->
   <link rel="apple-touch-icon" href="icon-192.png"/>
   <link rel="manifest" href="manifest.json"/>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -18,12 +17,11 @@
     .btm-bar{position:sticky;bottom:0;left:0;right:0;z-index:1030}
     .btm-bar .btn{min-height:44px}
     @keyframes fadeIn{from{opacity:.3;transform:translateY(2px)}to{opacity:1;transform:none}}
-    @media (max-width: 991.98px){ /* mobile: показвай само BG + активния език */
+    /* mobile: показвай само Моят език + активния */
+    @media (max-width: 991.98px){
       .lang-col{display:none;}
       .lang-col.active{display:block;}
-      .lang-card{display:block; width:100%;}
-    }
-      .lang-card.active{display:block}
+      .lang-card{display:block;width:100%}
     }
   </style>
 </head>
@@ -31,26 +29,18 @@
 <nav class="navbar navbar-expand-lg border-bottom sticky-top bg-body">
   <div class="container-lg">
     <a class="navbar-brand fw-semibold" href="#">Polyglot <span class="text-primary">Switch</span></a>
+
     <div class="d-flex align-items-center gap-2 ms-auto">
       <div class="d-none d-lg-flex align-items-center gap-2">
         <label id="lblMyLang" class="small text-secondary mb-0">Моят език:</label>
         <select id="userLangSelect" class="form-select form-select-sm" style="width:120px">
-          <option value="bg">BG</option>
-          <option value="en">EN</option>
-          <option value="es">ES</option>
-          <option value="pt">PT</option>
-          <option value="de">DE</option>
-          <option value="tl">TL</option>
-          <option value="id">ID</option>
+          <option value="bg">BG</option><option value="en">EN</option><option value="es">ES</option>
+          <option value="pt">PT</option><option value="de">DE</option><option value="tl">TL</option><option value="id">ID</option>
         </select>
         <label id="lblPartner" class="small text-secondary mb-0">Партньор:</label>
         <select id="langSelect" class="form-select form-select-sm" style="width:110px">
-          <option value="en">EN</option>
-          <option value="es">ES</option>
-          <option value="pt">PT</option>
-          <option value="de">DE</option>
-          <option value="tl">TL</option>
-          <option value="id">ID</option>
+          <option value="en">EN</option><option value="es">ES</option><option value="pt">PT</option>
+          <option value="de">DE</option><option value="tl">TL</option><option value="id">ID</option>
         </select>
       </div>
       <span id="pairBadge" class="badge text-bg-secondary">BG ↔ EN</span>
@@ -64,26 +54,26 @@
 
 <main class="container-lg py-3">
   <div class="row g-3">
-    <!-- Bulgarian panel (pivot) -->
+    <!-- User language panel (dynamic pivot) -->
     <div class="col-12 col-lg-6">
       <div class="card h-100 shadow-sm fade-enter">
         <div class="card-header d-flex align-items-center justify-content-between">
           <div>
-            <div class="fw-semibold">Български</div>
-            <small class="text-secondary">Пишеш тук → превежда към <span id="toLang">EN</span></small>
+            <div class="fw-semibold" id="userLangTitle">Моят език</div>
+            <small class="text-secondary"><span id="hintPrefix">Пишеш тук → превежда към</span> <span id="toLang">EN</span></small>
           </div>
           <div class="btn-group">
-            <button class="btn btn-sm btn-outline-secondary" id="bgPaste">Paste</button>
-            <button class="btn btn-sm btn-outline-secondary" id="bgCopy">Copy</button>
-            <button class="btn btn-sm btn-outline-secondary" id="bgClear">Clear</button>
-            <button class="btn btn-sm btn-success" id="bgTranslate">Преведи</button>
+            <button class="btn btn-sm btn-outline-secondary" id="userPaste">Постави</button>
+            <button class="btn btn-sm btn-outline-secondary" id="userCopy">Копирай</button>
+            <button class="btn btn-sm btn-outline-secondary" id="userClear">Изчисти</button>
+            <button class="btn btn-sm btn-success" id="userTranslate">Преведи</button>
           </div>
         </div>
         <div class="card-body">
-          <textarea id="taBG" class="form-control" placeholder="Пиши или постави български… (Ctrl/⌘+Enter превежда)"></textarea>
+          <textarea id="taUSER" class="form-control" placeholder="Пиши на избрания си език… (Ctrl/⌘+Enter превежда)"></textarea>
           <div class="d-flex align-items-center gap-2 mt-2">
             <button class="btn btn-sm btn-outline-primary" id="btnDetect">Auto detect ↔</button>
-            <small class="text-secondary">Засича езика и превежда към BG; актуализира активния език.</small>
+            <small class="text-secondary" id="detectHint">Засича езика и превежда към „Моят език“; актуализира активния.</small>
           </div>
         </div>
       </div>
@@ -92,13 +82,11 @@
     <!-- Right column: one card per foreign language (mobile показва само активния) -->
     <div class="col-12 col-lg-6">
       <div class="row g-3">
+
         <div class="col-12 col-md-6 lang-col active">
           <div class="card h-100 shadow-sm lang-card active" data-lang="en">
             <div class="card-header d-flex align-items-center justify-content-between">
-              <div>
-                <div class="fw-semibold">English</div>
-                <small class="text-secondary">Този панел задава активния език</small>
-              </div>
+              <div><div class="fw-semibold">English</div><small class="text-secondary">This panel sets the active language</small></div>
               <div class="btn-group">
                 <button class="btn btn-sm btn-outline-secondary" data-action="copy">Copy</button>
                 <button class="btn btn-sm btn-outline-secondary" data-action="clear">Clear</button>
@@ -118,10 +106,7 @@
         <div class="col-12 col-md-6 lang-col">
           <div class="card h-100 shadow-sm lang-card" data-lang="es">
             <div class="card-header d-flex align-items-center justify-content-between">
-              <div>
-                <div class="fw-semibold">Español</div>
-                <small class="text-secondary">Este panel define el idioma activo</small>
-              </div>
+              <div><div class="fw-semibold">Español</div><small class="text-secondary">Este panel define el idioma activo</small></div>
               <div class="btn-group">
                 <button class="btn btn-sm btn-outline-secondary" data-action="copy">Copiar</button>
                 <button class="btn btn-sm btn-outline-secondary" data-action="clear">Limpiar</button>
@@ -141,10 +126,7 @@
         <div class="col-12 col-md-6 lang-col">
           <div class="card h-100 shadow-sm lang-card" data-lang="pt">
             <div class="card-header d-flex align-items-center justify-content-between">
-              <div>
-                <div class="fw-semibold">Português (BR)</div>
-                <small class="text-secondary">Este painel define o idioma ativo</small>
-              </div>
+              <div><div class="fw-semibold">Português (BR)</div><small class="text-secondary">Este painel define o idioma ativo</small></div>
               <div class="btn-group">
                 <button class="btn btn-sm btn-outline-secondary" data-action="copy">Copiar</button>
                 <button class="btn btn-sm btn-outline-secondary" data-action="clear">Limpar</button>
@@ -164,10 +146,7 @@
         <div class="col-12 col-md-6 lang-col">
           <div class="card h-100 shadow-sm lang-card" data-lang="de">
             <div class="card-header d-flex align-items-center justify-content-between">
-              <div>
-                <div class="fw-semibold">Deutsch</div>
-                <small class="text-secondary">Dieses Panel setzt die aktive Sprache</small>
-              </div>
+              <div><div class="fw-semibold">Deutsch</div><small class="text-secondary">Dieses Panel setzt die aktive Sprache</small></div>
               <div class="btn-group">
                 <button class="btn btn-sm btn-outline-secondary" data-action="copy">Kopieren</button>
                 <button class="btn btn-sm btn-outline-secondary" data-action="clear">Löschen</button>
@@ -187,13 +166,10 @@
         <div class="col-12 col-md-6 lang-col">
           <div class="card h-100 shadow-sm lang-card" data-lang="tl">
             <div class="card-header d-flex align-items-center justify-content-between">
-              <div>
-                <div class="fw-semibold">Filipino (Tagalog)</div>
-                <small class="text-secondary">Ang panel na ito ang nagtatakda ng aktibong wika</small>
-              </div>
+              <div><div class="fw-semibold">Filipino (Tagalog)</div><small class="text-secondary">Ang panel na ito ang nagtatakda ng aktibong wika</small></div>
               <div class="btn-group">
                 <button class="btn btn-sm btn-outline-secondary" data-action="copy">Kopyahin</button>
-                <button class="btn btn-sm btn-outline-secondary" data-action="clear">I‑clear</button>
+                <button class="btn btn-sm btn-outline-secondary" data-action="clear">I-clear</button>
                 <button class="btn btn-sm btn-primary" data-action="translate">Isalin</button>
               </div>
             </div>
@@ -201,20 +177,16 @@
               <textarea class="form-control" placeholder="Magsulat sa Tagalog…"></textarea>
               <div class="d-flex align-items-center justify-content-between mt-2">
                 <small class="text-secondary">ISO: <code>tl</code></small>
-                <button class="btn btn-sm btn-outline-dark" data-action="make-active">I‑activate ↔</button>
+                <button class="btn btn-sm btn-outline-dark" data-action="make-active">I-activate ↔</button>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Indonesian -->
         <div class="col-12 col-md-6 lang-col">
           <div class="card h-100 shadow-sm lang-card" data-lang="id">
             <div class="card-header d-flex align-items-center justify-content-between">
-              <div>
-                <div class="fw-semibold">Bahasa Indonesia</div>
-                <small class="text-secondary">Panel ini menentukan bahasa aktif</small>
-              </div>
+              <div><div class="fw-semibold">Bahasa Indonesia</div><small class="text-secondary">Panel ini menentukan bahasa aktif</small></div>
               <div class="btn-group">
                 <button class="btn btn-sm btn-outline-secondary" data-action="copy">Salin</button>
                 <button class="btn btn-sm btn-outline-secondary" data-action="clear">Bersihkan</button>
@@ -236,7 +208,7 @@
   </div>
 
   <div class="text-secondary small mt-3">
-    Съвет: <span class="kbd">Ctrl/⌘ + Enter</span> превежда от активната графа. Активният език се сменя с превод от неговия панел, с „Активирай ↔“, или от падащото меню горе.
+    <span class="kbd">Ctrl/⌘ + Enter</span> translates current box. On mobile use the bottom bar.
   </div>
 </main>
 
@@ -251,75 +223,60 @@
 
 <!-- Settings Modal -->
 <div class="modal fade" id="settingsModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Настройки</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="mb-3">
-          <label class="form-label">API Endpoint</label>
-          <input id="endpoint" type="url" class="form-control" placeholder="http://127.0.0.1:5050">
-          <div class="form-text">На GitHub Pages не се ползва локален proxy. Frontend пада на HTTPS fallback.</div>
-        </div>
-        <div id="diag" class="small text-secondary"></div>
-      </div>
-      <div class="modal-footer">
-        <button id="btnTest" class="btn btn-outline-secondary">Тест /languages</button>
-        <button id="btnSave" class="btn btn-primary" data-bs-dismiss="modal">Запази</button>
-      </div>
+  <div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">Настройки</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
-  </div>
+    <div class="modal-body">
+      <div class="mb-3">
+        <label class="form-label">API Endpoint</label>
+        <input id="endpoint" type="url" class="form-control" placeholder="http://127.0.0.1:5050">
+        <div class="form-text">На GitHub Pages не се ползва локален proxy. Има HTTPS fallback.</div>
+      </div>
+      <div id="diag" class="small text-secondary"></div>
+    </div>
+    <div class="modal-footer">
+      <button id="btnTest" class="btn btn-outline-secondary">Тест /languages</button>
+      <button id="btnSave" class="btn btn-primary" data-bs-dismiss="modal">Запази</button>
+    </div>
+  </div></div>
+</div>
+
+<!-- README Modal -->
+<div class="modal fade" id="readmeModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="readmeTitle">Как да използваш приложението</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body" id="readmeBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" data-bs-dismiss="modal" id="readmeClose">Разбрах</button>
+    </div>
+  </div></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  // ===== App state =====
-  const LS = 'polyglot.switch.v5';
+  // ===== State & helpers =====
+  const LS = 'polyglot.switch.v6';
   const IS_LOCAL = ['localhost','127.0.0.1'].includes(location.hostname);
   const DEFAULT_ENDPOINT = IS_LOCAL ? 'http://127.0.0.1:5050' : '';
+  const LANG_NAMES = { bg:'Български', en:'English', es:'Español', pt:'Português (BR)', de:'Deutsch', tl:'Filipino (Tagalog)', id:'Bahasa Indonesia' };
   let state = { endpoint: DEFAULT_ENDPOINT, userLang: 'bg', activeLang: 'en', theme: 'light' };
 
-  function loadState(){
-    try{ Object.assign(state, JSON.parse(localStorage.getItem(LS)||'{}')); }catch{}
-    if(!IS_LOCAL) state.endpoint = '';
-    document.documentElement.setAttribute('data-bs-theme', state.theme||'light');
-  }
-  function saveState(){ localStorage.setItem(LS, JSON.stringify(state)); }
   const $$ = (s, r=document)=> Array.from(r.querySelectorAll(s));
-  const $ = (s, r=document)=> r.querySelector(s);
+  const $  = (s, r=document)=> r.querySelector(s);
+  function loadState(){ try{ Object.assign(state, JSON.parse(localStorage.getItem(LS)||'{}')); }catch{} if(!IS_LOCAL) state.endpoint=''; document.documentElement.setAttribute('data-bs-theme', state.theme||'light'); }
+  function saveState(){ localStorage.setItem(LS, JSON.stringify(state)); }
 
-  function updatePairBadge(){
-    $('#pairBadge').textContent = `${(state.userLang||'bg').toUpperCase()} ↔ ${state.activeLang.toUpperCase()}`;
-    $('#toLang').textContent = state.activeLang.toUpperCase();
-    $('#langSelect').value = state.activeLang;
-    const uls = $('#userLangSelect'); if(uls) uls.value = state.userLang||'bg';
-    $$('.lang-card').forEach(c=>{
-      const on = c.dataset.lang === state.activeLang;
-      c.classList.toggle('active', on);
-      const col = c.closest('.lang-col');
-      if(col) col.classList.toggle('active', on);
-    });
-  }`;
-    $('#toLang').textContent = state.activeLang.toUpperCase();
-    $('#langSelect').value = state.activeLang;
-    $$('.lang-card').forEach(c=>{
-      const on = c.dataset.lang === state.activeLang;
-      c.classList.toggle('active', on);
-      const col = c.closest('.lang-col');
-      if(col) col.classList.toggle('active', on);
-    });
-  }
-
+  // ===== API & translation =====
   async function api(path, opts){
-    if(!state.endpoint) throw new Error('no-endpoint');
+    if(!state.endpoint) throw new Error('no-endpoint'); // force fallback on Pages
     const url=(state.endpoint||DEFAULT_ENDPOINT).replace(/\/$/,'')+path;
-    const r=await fetch(url,opts);
-    if(!r.ok) throw new Error('HTTP '+r.status+' '+path);
-    return r.json();
+    const r=await fetch(url,opts); if(!r.ok) throw new Error('HTTP '+r.status+' '+path); return r.json();
   }
-
   const mm = c => c.toLowerCase()==='pt' ? 'pt-BR' : c.toLowerCase();
   async function myMemory(q,src,tgt){
     const s=mm(src), t=mm(tgt);
@@ -338,25 +295,142 @@
     return 'auto';
   }
 
+  // ===== UI update =====
+  function updatePairBadge(){
+    $('#pairBadge').textContent = `${state.userLang.toUpperCase()} ↔ ${state.activeLang.toUpperCase()}`;
+    $('#toLang').textContent = state.activeLang.toUpperCase();
+    $('#langSelect').value = state.activeLang;
+    $('#userLangSelect').value = state.userLang;
+    $('#userLangTitle').textContent = LANG_NAMES[state.userLang] || 'Моят език';
+
+    $$('.lang-card').forEach(c=>{
+      const on = c.dataset.lang === state.activeLang;
+      c.classList.toggle('active', on);
+      c.closest('.lang-col')?.classList.toggle('active', on);
+    });
+  }
+
+  // ===== I18N dictionary =====
+  const I18N = {
+    bg:{nav_my:'Моят език:',nav_partner:'Партньор:',theme:'Тема',install:'Инсталирай',settings:'Настройки',readme:'README',
+        user_title:'Моят език',hint_prefix:'Пишеш тук → превежда към',paste:'Постави',copy:'Копирай',clear:'Изчисти',translate:'Преведи',
+        autodetect:'Auto detect ↔',detect_hint:'Засича езика и превежда към „Моят език“; актуализира активния.',
+        quick_paste:'Постави',quick_translate:'Преведи',
+        readme_title:'Как да използваш приложението',readme_ok:'Разбрах',
+        readme_html:`<ol class="mb-2">
+          <li><b>Моят език</b> (интерфейс + pivot) и <b>Партньор</b> (език за превод) са горе вдясно.</li>
+          <li>Пиши в левия панел → <b>Преведи</b> изпраща към <b>Партньор</b>.</li>
+          <li>Пиши в десен панел → <b>Translate</b> връща към <b>Моят език</b> и го прави активен.</li>
+          <li><b>Ctrl/⌘+Enter</b> превежда текущото поле.</li>
+          <li>На телефон ползвай долната лента.</li>
+        </ol>`},
+    en:{nav_my:'My language:',nav_partner:'Partner:',theme:'Theme',install:'Install',settings:'Settings',readme:'README',
+        user_title:'My language',hint_prefix:'Type here → translates to',paste:'Paste',copy:'Copy',clear:'Clear',translate:'Translate',
+        autodetect:'Auto detect ↔',detect_hint:'Detects language and translates to “My language”; updates active.',
+        quick_paste:'Paste',quick_translate:'Translate',
+        readme_title:'How to use',readme_ok:'Got it',
+        readme_html:`<ol class="mb-2">
+          <li><b>My language</b> (UI+pivot) and <b>Partner</b> (target) are in the top-right.</li>
+          <li>Type in the left panel → <b>Translate</b> sends to <b>Partner</b>.</li>
+          <li>Type in a right panel → <b>Translate</b> sends back to <b>My language</b> and makes it active.</li>
+          <li><b>Ctrl/⌘+Enter</b> translates the focused box.</li>
+          <li>On mobile use the bottom bar.</li>
+        </ol>`},
+    es:{nav_my:'Mi idioma:',nav_partner:'Pareja:',theme:'Tema',install:'Instalar',settings:'Ajustes',readme:'README',
+        user_title:'Mi idioma',hint_prefix:'Escribe aquí → traduce a',paste:'Pegar',copy:'Copiar',clear:'Limpiar',translate:'Traducir',
+        autodetect:'Auto detectar ↔',detect_hint:'Detecta y traduce a “Mi idioma”; actualiza el activo.',
+        quick_paste:'Pegar',quick_translate:'Traducir',
+        readme_title:'Cómo usar',readme_ok:'Entendido',
+        readme_html:`<ol class="mb-2"><li><b>Mi idioma</b> (UI+pivote) y <b>Pareja</b> (destino) arriba a la derecha.</li><li>Desde la izquierda → a <b>Pareja</b>.</li><li>Desde la derecha → a <b>Mi idioma</b>.</li><li><b>Ctrl/⌘+Enter</b> traduce.</li><li>En móvil: barra inferior.</li></ol>`},
+    pt:{nav_my:'Meu idioma:',nav_partner:'Parceiro:',theme:'Tema',install:'Instalar',settings:'Configurações',readme:'README',
+        user_title:'Meu idioma',hint_prefix:'Digite aqui → traduz para',paste:'Colar',copy:'Copiar',clear:'Limpar',translate:'Traduzir',
+        autodetect:'Auto detectar ↔',detect_hint:'Detecta e traduz para “Meu idioma”; atualiza o ativo.',
+        quick_paste:'Colar',quick_translate:'Traduzir',
+        readme_title:'Como usar',readme_ok:'Entendi',
+        readme_html:`<ol class="mb-2"><li><b>Meu idioma</b> (UI+pivô) e <b>Parceiro</b> (alvo) no canto superior direito.</li><li>Da esquerda → para <b>Parceiro</b>.</li><li>Da direita → para <b>Meu idioma</b>.</li><li><b>Ctrl/⌘+Enter</b> traduz.</li><li>No celular: barra inferior.</li></ol>`},
+    de:{nav_my:'Meine Sprache:',nav_partner:'Partner:',theme:'Thema',install:'Installieren',settings:'Einstellungen',readme:'README',
+        user_title:'Meine Sprache',hint_prefix:'Hier schreiben → übersetzt nach',paste:'Einfügen',copy:'Kopieren',clear:'Leeren',translate:'Übersetzen',
+        autodetect:'Auto erkennen ↔',detect_hint:'Erkennt und übersetzt zu „Meine Sprache“; aktualisiert aktiv.',
+        quick_paste:'Einfügen',quick_translate:'Übersetzen',
+        readme_title:'Anleitung',readme_ok:'Alles klar',
+        readme_html:`<ol class="mb-2"><li><b>Meine Sprache</b> (UI+Drehpunkt) und <b>Partner</b> (Ziel) oben rechts.</li><li>Links → zu <b>Partner</b>.</li><li>Rechts → zu <b>Meine Sprache</b>.</li><li><b>Ctrl/⌘+Enter</b> übersetzt.</li><li>Mobil: Leiste unten.</li></ol>`},
+    tl:{nav_my:'Aking wika:',nav_partner:'Katuwang:',theme:'Tema',install:'I-install',settings:'Mga setting',readme:'README',
+        user_title:'Aking wika',hint_prefix:'Dito magsulat → isasalin sa',paste:'I-paste',copy:'Kopyahin',clear:'I-clear',translate:'Isalin',
+        autodetect:'Auto detect ↔',detect_hint:'Tinutukoy at isinasalin sa “Aking wika”; ina-update ang aktibo.',
+        quick_paste:'I-paste',quick_translate:'Isalin',
+        readme_title:'Paano gamitin',readme_ok:'Sige',
+        readme_html:`<ol class="mb-2"><li><b>Aking wika</b> (UI+pivot) at <b>Katuwang</b> (target) sa itaas na kanan.</li><li>Mula sa kaliwa → sa <b>Katuwang</b>.</li><li>Mula sa kanan → sa <b>Aking wika</b>.</li><li><b>Ctrl/⌘+Enter</b> nagsasalin.</li><li>Sa mobile: ibabang bar.</li></ol>`},
+    id:{nav_my:'Bahasa saya:',nav_partner:'Pasangan:',theme:'Tema',install:'Pasang',settings:'Pengaturan',readme:'README',
+        user_title:'Bahasa saya',hint_prefix:'Ketik di sini → terjemahkan ke',paste:'Tempel',copy:'Salin',clear:'Bersihkan',translate:'Terjemahkan',
+        autodetect:'Deteksi otomatis ↔',detect_hint:'Mendeteksi dan menerjemahkan ke “Bahasa saya”; memperbarui aktif.',
+        quick_paste:'Tempel',quick_translate:'Terjemahkan',
+        readme_title:'Cara pakai',readme_ok:'Mengerti',
+        readme_html:`<ol class="mb-2"><li><b>Bahasa saya</b> (UI+pivot) dan <b>Pasangan</b> (target) di kanan atas.</li><li>Dari kiri → ke <b>Pasangan</b>.</li><li>Dari kanan → ke <b>Bahasa saya</b>.</li><li><b>Ctrl/⌘+Enter</b> menerjemahkan.</li><li>Di ponsel: bilah bawah.</li></ol>`}
+  };
+
+  function applyI18N(){
+    const tr = I18N[state.userLang] || I18N.en;
+    // Navbar
+    $('#lblMyLang').textContent = tr.nav_my;
+    $('#lblPartner').textContent = tr.nav_partner;
+    $('#btnTheme').textContent = tr.theme;
+    $('#btnInstall').textContent = tr.install;
+    $('#btnSettings').textContent = tr.settings;
+    $('#btnReadme').textContent = tr.readme;
+    // Left panel
+    $('#userLangTitle').textContent = tr.user_title;
+    $('#hintPrefix').textContent = tr.hint_prefix;
+    $('#userPaste').textContent = tr.paste;
+    $('#userCopy').textContent  = tr.copy;
+    $('#userClear').textContent = tr.clear;
+    $('#userTranslate').textContent = tr.translate;
+    $('#btnDetect').textContent = tr.autodetect;
+    $('#detectHint').textContent = tr.detect_hint;
+    // Bottom bar
+    $('#quickPaste').textContent = tr.quick_paste;
+    $('#quickTranslate').textContent = tr.quick_translate;
+    // README modal
+    $('#readmeTitle').textContent = tr.readme_title;
+    $('#readmeBody').innerHTML   = tr.readme_html;
+    $('#readmeClose').textContent= tr.readme_ok;
+  }
+
+  // ===== Actions =====
+  async function translateFromUser(){
+    const q = $('#taUSER').value.trim(); if(!q) return;
+    const out = await translateSmart(q, state.userLang, state.activeLang);
+    const targetTa = document.querySelector(`.card[data-lang="${state.activeLang}"] textarea`);
+    if(targetTa) targetTa.value = out;
+    updatePairBadge();
+  }
+  async function translateFromForeign(lang, text){
+    const q = (text||'').trim(); if(!q) return;
+    state.activeLang = lang; saveState(); updatePairBadge();
+    const out = await translateSmart(q, lang, state.userLang);
+    $('#taUSER').value = out;
+  }
+
+  // ===== Wiring =====
   function wire(){
     // Theme
     $('#btnTheme').addEventListener('click', ()=>{ state.theme = state.theme==='dark'?'light':'dark'; document.documentElement.setAttribute('data-bs-theme', state.theme); saveState(); });
-    // Lang select (desktop)
+
+    // Selects
     $('#langSelect').addEventListener('change', e=>{ state.activeLang=e.target.value; saveState(); updatePairBadge(); });
-    const uls = $('#userLangSelect'); if(uls){ uls.addEventListener('change', e=>{ state.userLang=e.target.value; saveState(); applyI18N(); updatePairBadge(); }); } updatePairBadge(); });
+    $('#userLangSelect').addEventListener('change', e=>{ state.userLang=e.target.value; saveState(); applyI18N(); updatePairBadge(); });
 
     // Settings
-    const endpointInput = $('#settingsModal #endpoint'); const diag = $('#settingsModal #diag');
+    const endpointInput = $('#endpoint'); const diag = $('#diag');
     $('#settingsModal').addEventListener('show.bs.modal', ()=>{ endpointInput.value = state.endpoint; diag.textContent=''; });
     $('#btnSave').addEventListener('click', ()=>{ state.endpoint = endpointInput.value.trim()||DEFAULT_ENDPOINT; if(!IS_LOCAL) state.endpoint=''; saveState(); });
     $('#btnTest').addEventListener('click', async()=>{ diag.textContent='Тествам…'; try{ const data=await api('/languages'); diag.textContent='OK: '+(Array.isArray(data)?data.map(x=>x.code).join(', '):JSON.stringify(data)); }catch(e){ diag.textContent='(Очаквано на Pages) '+e.message+' → използва се HTTPS fallback.'; }});
 
-    // BG
-    $('#bgPaste').addEventListener('click', async()=>{ try{ $('#taBG').value = await navigator.clipboard.readText(); }catch{} });
-    $('#bgCopy').addEventListener('click', async()=>{ try{ await navigator.clipboard.writeText($('#taBG').value); }catch{} });
-    $('#bgClear').addEventListener('click', ()=> $('#taBG').value='');
-    $('#bgTranslate').addEventListener('click', ()=> translateFromBG());
-    $('#taBG').addEventListener('keydown', e=>{ if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){ e.preventDefault(); translateFromBG(); }});
+    // User panel
+    $('#userPaste').addEventListener('click', async()=>{ try{ $('#taUSER').value = await navigator.clipboard.readText(); }catch{} });
+    $('#userCopy').addEventListener('click', async()=>{ try{ await navigator.clipboard.writeText($('#taUSER').value); }catch{} });
+    $('#userClear').addEventListener('click', ()=> $('#taUSER').value='');
+    $('#userTranslate').addEventListener('click', ()=> translateFromUser());
+    $('#taUSER').addEventListener('keydown', e=>{ if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){ e.preventDefault(); translateFromUser(); }});
 
     // Foreign panels
     $$('.card[data-lang]').forEach(card=>{
@@ -368,105 +442,26 @@
       $('[data-action="clear"]', card).addEventListener('click', ()=> ta.value='');
     });
 
-    // Bottom bar quick actions
-    $('#quickPaste').addEventListener('click', async()=>{ try{ $('#taBG').value = await navigator.clipboard.readText(); }catch{} });
+    // Bottom quick actions
+    $('#quickPaste').addEventListener('click', async()=>{ try{ $('#taUSER').value = await navigator.clipboard.readText(); }catch{} });
     $('#quickSwap').addEventListener('click', ()=>{ const order=['en','es','pt','de','tl','id']; const i=order.indexOf(state.activeLang); state.activeLang=order[(i+1)%order.length]; saveState(); updatePairBadge(); });
-    $('#quickTranslate').addEventListener('click', ()=> translateFromBG());
+    $('#quickTranslate').addEventListener('click', ()=> translateFromUser());
+
+    // PWA install (optional UI)
+    window.addEventListener('beforeinstallprompt', (e)=>{ e.preventDefault(); window.deferredPrompt = e; $('#btnInstall').hidden = false; });
+    $('#btnInstall').addEventListener('click', async()=>{ const p=window.deferredPrompt; if(!p) return; p.prompt(); await p.userChoice; $('#btnInstall').hidden = true; window.deferredPrompt=null; });
   }
 
-  async function translateFromBG(){ const q=$('#taBG').value.trim(); if(!q) return; const tgt=state.activeLang||'en'; const out=await translateSmart(q,'bg',tgt); const targetTa=document.querySelector(`.card[data-lang="${tgt}"] textarea`); if(targetTa) targetTa.value=out; updatePairBadge(); }
-  async function translateFromForeign(lang,text){ const q=(text||'').trim(); if(!q) return; state.activeLang=lang; saveState(); updatePairBadge(); const out=await translateSmart(q,lang,'bg'); $('#taBG').value=out; }
-
-  // Boot
+  // ===== Boot =====
   loadState();
+  applyI18N();
   updatePairBadge();
   wire();
 
-  // ===== I18N =====
-  const I18N = {
-    bg:{nav_my:'Моят език:',nav_partner:'Партньор:',theme:'Тема',install:'Инсталирай',settings:'Настройки',readme:'README',user_title:'Български',paste:'Постави',copy:'Копирай',clear:'Изчисти',translate:'Преведи',autodetect:'Auto detect ↔',quick_paste:'Постави',quick_translate:'Преведи',readme_title:'Как да използваш приложението',readme_ok:'Разбрах',readme_html:`<ol class='mb-2'><li><b>Избери</b> език в <i>Партньор</i>.</li><li>Пиши в <b>Български</b> и натисни <b>Преведи</b>.</li><li>От десните панели → към BG.</li><li><b>Ctrl/⌘+Enter</b> превежда текущото поле.</li><li>На телефон ползвай долната лента.</li></ol>`},
-    en:{nav_my:'My language:',nav_partner:'Partner:',theme:'Theme',install:'Install',settings:'Settings',readme:'README',user_title:'Bulgarian',paste:'Paste',copy:'Copy',clear:'Clear',translate:'Translate',autodetect:'Auto detect ↔',quick_paste:'Paste',quick_translate:'Translate',readme_title:'How to use',readme_ok:'Got it',readme_html:`<ol class='mb-2'><li><b>Pick</b> language in <i>Partner</i>.</li><li>Type in <b>Bulgarian</b> then <b>Translate</b>.</li><li>From right panels → to BG.</li><li><b>Ctrl/⌘+Enter</b> translates current box.</li><li>On mobile use the bottom bar.</li></ol>`},
-    es:{nav_my:'Mi idioma:',nav_partner:'Pareja:',theme:'Tema',install:'Instalar',settings:'Ajustes',readme:'README',user_title:'Búlgaro',paste:'Pegar',copy:'Copiar',clear:'Limpiar',translate:'Traducir',autodetect:'Auto detectar ↔',quick_paste:'Pegar',quick_translate:'Traducir',readme_title:'Cómo usar',readme_ok:'Entendido',readme_html:`<ol class='mb-2'><li><b>Elige</b> idioma en <i>Pareja</i>.</li><li>Escribe en <b>Búlgaro</b> y pulsa <b>Traducir</b>.</li><li>Desde la derecha → a BG.</li><li><b>Ctrl/⌘+Enter</b> traduce.</li><li>En móvil: barra inferior.</li></ol>`},
-    pt:{nav_my:'Meu idioma:',nav_partner:'Parceiro:',theme:'Tema',install:'Instalar',settings:'Configurações',readme:'README',user_title:'Búlgaro',paste:'Colar',copy:'Copiar',clear:'Limpar',translate:'Traduzir',autodetect:'Auto detectar ↔',quick_paste:'Colar',quick_translate:'Traduzir',readme_title:'Como usar',readme_ok:'Entendi',readme_html:`<ol class='mb-2'><li><b>Escolha</b> idioma em <i>Parceiro</i>.</li><li>Escreva em <b>Búlgaro</b> e clique <b>Traduzir</b>.</li><li>Da direita → para BG.</li><li><b>Ctrl/⌘+Enter</b> traduz.</li><li>No celular: barra inferior.</li></ol>`},
-    de:{nav_my:'Meine Sprache:',nav_partner:'Partner:',theme:'Thema',install:'Installieren',settings:'Einstellungen',readme:'README',user_title:'Bulgarisch',paste:'Einfügen',copy:'Kopieren',clear:'Leeren',translate:'Übersetzen',autodetect:'Auto erkennen ↔',quick_paste:'Einfügen',quick_translate:'Übersetzen',readme_title:'Anleitung',readme_ok:'Alles klar',readme_html:`<ol class='mb-2'><li><b>Sprache wählen</b> bei <i>Partner</i>.</li><li>Links in <b>Bulgarisch</b> schreiben und <b>Übersetzen</b>.</li><li>Rechts → nach BG.</li><li><b>Ctrl/⌘+Enter</b> übersetzt.</li><li>Mobil: Leiste unten.</li></ol>`},
-    tl:{nav_my:'Aking wika:',nav_partner:'Katuwang:',theme:'Tema',install:'I-install',settings:'Mga setting',readme:'README',user_title:'Bulgarian',paste:'I-paste',copy:'Kopyahin',clear:'I-clear',translate:'Isalin',autodetect:'Auto detect ↔',quick_paste:'I-paste',quick_translate:'Isalin',readme_title:'Paano gamitin',readme_ok:'Sige',readme_html:`<ol class='mb-2'><li><b>Pumili</b> sa <i>Katuwang</i>.</li><li>Magsulat sa <b>Bulgarian</b> at <b>Isalin</b>.</li><li>Mula sa kanan → sa BG.</li><li><b>Ctrl/⌘+Enter</b> nagsasalin.</li><li>Sa mobile: ibabang bar.</li></ol>`},
-    id:{nav_my:'Bahasa saya:',nav_partner:'Pasangan:',theme:'Tema',install:'Pasang',settings:'Pengaturan',readme:'README',user_title:'Bulgaria',paste:'Tempel',copy:'Salin',clear:'Bersihkan',translate:'Terjemahkan',autodetect:'Deteksi otomatis ↔',quick_paste:'Tempel',quick_translate:'Terjemahkan',readme_title:'Cara pakai',readme_ok:'Mengerti',readme_html:`<ol class='mb-2'><li><b>Pilih</b> bahasa di <i>Pasangan</i>.</li><li>Ketik di <b>Bulgaria</b> lalu <b>Terjemahkan</b>.</li><li>Dari kanan → ke BG.</li><li><b>Ctrl/⌘+Enter</b> menerjemahkan.</li><li>Di ponsel: bilah bawah.</li></ol>`}
-  };
-  function applyI18N(){
-    const tr = I18N[state.userLang||'bg']||I18N.en;
-    $('#lblMyLang').textContent = tr.nav_my; $('#lblPartner').textContent = tr.nav_partner;
-    $('#btnTheme').textContent = tr.theme; $('#btnInstall').textContent = tr.install; $('#btnSettings').textContent = tr.settings; $('#btnReadme').textContent = tr.readme;
-    const userTitleEl = document.querySelector('#taBG')?.closest('.card')?.querySelector('.card-header .fw-semibold');
-    if(userTitleEl) userTitleEl.textContent = tr.user_title;
-    $('#bgPaste').textContent = tr.paste; $('#bgCopy').textContent = tr.copy; $('#bgClear').textContent = tr.clear; $('#bgTranslate').textContent = tr.translate;
-    $('#btnDetect').textContent = tr.autodetect;
-    $('#quickPaste').textContent = tr.quick_paste; $('#quickTranslate').textContent = tr.quick_translate;
-    // README
-    $('#readmeTitle').textContent = tr.readme_title; $('#readmeBody').innerHTML = tr.readme_html; $('#readmeClose')?.textContent = tr.readme_ok;
-  }
-  applyI18N();
-
-// Classic PWA registration (external files)
+  // Service worker
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js', { scope: './' }).catch(()=>{});
   }
 </script>
-
-<!--
-====================
-CREATE THESE 2 FILES IN YOUR REPO ROOT:
-====================
-
-FILE: manifest.json
-{
-  "name": "Polyglot Switch",
-  "short_name": "Polyglot",
-  "start_url": "./",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#0d6efd",
-  "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
-  ]
-}
-
---------------------
-FILE: sw.js
-const CACHE = 'polyglot-v1';
-const OFFLINE_URLS = [
-  './','index.html',
-  'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css',
-  'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js'
-];
-self.addEventListener('install',e=>{ self.skipWaiting(); e.waitUntil(caches.open(CACHE).then(c=>c.addAll(OFFLINE_URLS))); });
-self.addEventListener('activate',e=>self.clients.claim());
-self.addEventListener('fetch',e=>{ e.respondWith(fetch(e.request).catch(()=>caches.match(e.request).then(r=>r||caches.match('./')))); });
-
---------------------
-ALSO ADD 2 ICON FILES:
-  icon-192.png
-  icon-512.png
-(можеш временно да копираш 512→192, или да ползваш каквато и да е PNG икона.)
-
-После комитни всички файлове и активирай GitHub Pages (Settings → Pages → Deploy from a branch → main /root).
--->
-
-<!-- README Modal (appends at end to ensure present) -->
-<div class="modal fade" id="readmeModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="readmeTitle">Как да използваш приложението</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body" id="readmeBody"></div>
-      <div class="modal-footer">
-        <button class="btn btn-primary" data-bs-dismiss="modal" id="readmeClose">Разбрах</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 </body>
 </html>
