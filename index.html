@@ -30,6 +30,7 @@
     <a class="navbar-brand fw-semibold" href="#">Polyglot <span class="text-primary">Switch</span></a>
 
     <div class="d-flex align-items-center gap-2 ms-auto">
+      <!-- desktop selectors -->
       <div class="d-none d-lg-flex align-items-center gap-2">
         <label id="lblMyLang" class="small text-secondary mb-0">Моят език:</label>
         <select id="userLangSelect" class="form-select form-select-sm" style="width:120px">
@@ -42,7 +43,15 @@
           <option value="de">DE</option><option value="tl">TL</option><option value="id">ID</option>
         </select>
       </div>
+
+      <!-- бейдж + МОБИЛЕН бутон за „Моят език“ -->
       <span id="pairBadge" class="badge text-bg-secondary">BG ↔ EN</span>
+      <button id="btnUserLangMobile"
+              class="btn btn-sm btn-outline-secondary d-lg-none"
+              type="button"
+              data-bs-toggle="modal"
+              data-bs-target="#userLangModal">BG</button>
+
       <button id="btnTheme" class="btn btn-sm btn-outline-secondary" type="button" title="Смени тема">Тема</button>
       <button class="btn btn-sm btn-outline-success" id="btnInstall" type="button" hidden>Инсталирай</button>
       <button class="btn btn-sm btn-secondary" id="btnReadme" type="button" data-bs-toggle="modal" data-bs-target="#readmeModal">README</button>
@@ -250,10 +259,23 @@
   </div></div>
 </div>
 
+<!-- Mobile: смяна на „Моят език“ -->
+<div class="modal fade" id="userLangModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="userLangModalTitle">Моят език</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+      <div class="row g-2" id="userLangGrid"></div>
+    </div>
+  </div></div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
   // ===== State & helpers =====
-  const LS = 'polyglot.switch.v8';
+  const LS = 'polyglot.switch.v9';
   const IS_LOCAL = ['localhost','127.0.0.1'].includes(location.hostname);
   const DEFAULT_ENDPOINT = IS_LOCAL ? 'http://127.0.0.1:5050' : '';
   const LANG_NAMES = { bg:'Български', en:'English', es:'Español', pt:'Português (BR)', de:'Deutsch', tl:'Filipino (Tagalog)', id:'Bahasa Indonesia' };
@@ -295,7 +317,7 @@
     $('#langSelect').value = state.activeLang;
     $('#userLangSelect').value = state.userLang;
     $('#userLangTitle').textContent = LANG_NAMES[state.userLang] || 'Моят език';
-
+    updateMobileUserLangBtn();
     $$('.lang-card').forEach(c=>{
       const on = c.dataset.lang === state.activeLang;
       c.classList.toggle('active', on);
@@ -381,6 +403,38 @@
     $('#readmeTitle').textContent = tr.readme_title;
     $('#readmeBody').innerHTML   = tr.readme_html;
     $('#readmeClose').textContent= tr.readme_ok;
+    // Mobile user-lang modal title
+    $('#userLangModalTitle').textContent = tr.nav_my || 'My language';
+    updateMobileUserLangBtn();
+  }
+
+  // ===== Mobile: user language switch =====
+  function updateMobileUserLangBtn(){
+    const b = document.getElementById('btnUserLangMobile');
+    if (b) b.textContent = (state.userLang || 'bg').toUpperCase();
+  }
+  function renderUserLangGrid(){
+    const grid = document.getElementById('userLangGrid');
+    if(!grid) return;
+    grid.innerHTML = '';
+    Object.entries(LANG_NAMES).forEach(([code, name])=>{
+      const col = document.createElement('div');
+      col.className = 'col-6';
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'btn w-100 ' + (code===state.userLang ? 'btn-primary' : 'btn-outline-secondary');
+      btn.textContent = `${name} (${code.toUpperCase()})`;
+      btn.addEventListener('click', ()=>{
+        state.userLang = code;
+        saveState();
+        applyI18N();
+        updatePairBadge();
+        const inst = bootstrap.Modal.getInstance(document.getElementById('userLangModal'));
+        inst && inst.hide();
+      });
+      col.appendChild(btn);
+      grid.appendChild(col);
+    });
   }
 
   // ===== Actions =====
@@ -432,6 +486,9 @@
 
     // Bottom quick swap
     $('#quickSwap').addEventListener('click', ()=>{ const order=['en','es','pt','de','tl','id']; const i=order.indexOf(state.activeLang); state.activeLang=order[(i+1)%order.length]; saveState(); updatePairBadge(); });
+
+    // Mobile modal render
+    document.getElementById('userLangModal')?.addEventListener('show.bs.modal', renderUserLangGrid);
 
     // PWA install (optional)
     window.addEventListener('beforeinstallprompt', (e)=>{ e.preventDefault(); window.deferredPrompt = e; $('#btnInstall').hidden = false; });
